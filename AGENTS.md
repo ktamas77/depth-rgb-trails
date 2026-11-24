@@ -4,7 +4,7 @@ An OBS Studio filter for Apple silicon Macs that trails the foreground of a sour
 copies of itself, in red, blue and green, with depth from Apple's Depth Pro 2 run through Core ML.
 The README has the installation, the use and the limits; read it first. The repository is Apple's
 Depth Pro 2 code (the Python package and the Core ML exporter, kept as upstream) with the plugin
-added in `plugin/`. It started from https://github.com/ktamas77/obs-depth-background-removal, which
+added in `plugin/`. It started from https://github.com/ktamas77/depth-background-removal, which
 shares the model loading and the mask and removes the background instead.
 
 ## Build and check

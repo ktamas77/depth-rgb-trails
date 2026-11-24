@@ -12,7 +12,7 @@ The filter stacks five layers, from the top:
 
 What counts as foreground is decided by distance: everything nearer than a cutoff. The distance comes from Apple's [Depth Pro 2](https://github.com/apple-aiml-research/ml-depth-pro-2), a model that estimates the depth of every pixel from an ordinary camera picture, run on the Mac with Core ML.
 
-This is an independent project: it is not part of OBS or made by the OBS Project, and it is not an Apple project. The repository is a copy of Apple's Depth Pro 2 code with the plugin added in [`plugin/`](plugin). The Python package stays because it exports the models the plugin runs. It started from [Depth Background Removal](https://github.com/ktamas77/obs-depth-background-removal), which uses the same model to make the background transparent.
+This is an independent project: it is not part of OBS or made by the OBS Project, and it is not an Apple project. The repository is a copy of Apple's Depth Pro 2 code with the plugin added in [`plugin/`](plugin). The Python package stays because it exports the models the plugin runs. It started from [Depth Background Removal](https://github.com/ktamas77/depth-background-removal), which uses the same model to make the background transparent.
 
 ## Requirements
 
