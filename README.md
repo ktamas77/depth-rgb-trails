@@ -76,9 +76,9 @@ Measured in OBS 33.0.3 on a MacBook Pro with an M1 Max, on a 1920x1080 canvas at
 
 | Model | Input size | Model time per frame | OBS |
 |---|---|---|---|
-| S, window 4 | 640x360 | 40 to 42 ms | 30 fps, 4.2 ms per rendered frame |
+| S, window 4 | 640x360 | 32 to 42 ms over three runs | 30 fps, 2.0 ms per rendered frame |
 
-So on that Mac the mask follows at about 25 frames per second. [demo/README.md](demo/README.md) has Apple's timings of every model and size on an M4 Max.
+So on that Mac the mask follows at 24 to 30 frames per second, depending on what else the machine is doing. [demo/README.md](demo/README.md) has Apple's timings of every model and size on an M4 Max.
 
 ## Limits
 
