@@ -1,7 +1,9 @@
 # Core ML export
 
-`python -m demo.export` writes the Core ML packages that the [OBS plugin](../obs-plugin) runs. It is
-Apple's exporter, unchanged; the Mac demo app it came with is not part of this repository.
+`python -m demo.export` writes the Core ML packages that the [plugin](../plugin) runs. It is
+Apple's exporter, unchanged. The Mac demo app next to it, `apple/`, doubles as a preview of the
+plugin: `./demo/trails.sh` shows the trails on the Mac's camera without OBS, as the main README
+describes.
 
 ```bash
 uv run --extra coreml python -m demo.export stream -m depthpro2-s -s 360x640 -w 4

@@ -1,0 +1,96 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Store keeps a frame with its foreground as alpha. Draw stacks, from the top: the foreground, three earlier
+// foregrounds in red, blue and green, and the background, blurred if asked.
+
+uniform float4x4 ViewProj;
+uniform texture2d image;  // the picture now
+uniform texture2d depth;  // its inverse depth, stretched over it
+uniform texture2d recent; // the newest stored frame, small: the source of the blur
+uniform texture2d ghost1; // stored frames one, two and three delays old
+uniform texture2d ghost2;
+uniform texture2d ghost3;
+uniform float scale;      // meters = scale / inverse depth
+uniform float cutoff;     // meters: nearer is foreground
+uniform float opacity;    // of each colored layer
+uniform float2 texel;     // the blur's tap spacing in the stored frame, 0 for no blur
+
+sampler_state linearClamp {
+	Filter    = Linear;
+	AddressU  = Clamp;
+	AddressV  = Clamp;
+};
+
+struct VertData {
+	float4 pos : POSITION;
+	float2 uv  : TEXCOORD0;
+};
+
+VertData VSDefault(VertData v_in)
+{
+	VertData v_out;
+	v_out.pos = mul(float4(v_in.pos.xyz, 1.0), ViewProj);
+	v_out.uv  = v_in.uv;
+	return v_out;
+}
+
+// 1 in the foreground, 0 behind the cutoff, blended over a 10% band.
+float Foreground(float2 uv)
+{
+	float meters = scale / max(depth.Sample(linearClamp, uv).r, 0.000001);
+	return 1.0 - smoothstep(0.95 * cutoff, 1.05 * cutoff, meters);
+}
+
+// A 5x5 tent over the small frame.
+// ponytail: the small frame includes the foreground, so its colors bleed a little into the blur around it.
+float3 Blurred(float2 uv)
+{
+	float3 sum = float3(0.0, 0.0, 0.0);
+	for (float y = -2.0; y <= 2.0; y += 1.0)
+		for (float x = -2.0; x <= 2.0; x += 1.0)
+			sum += recent.Sample(linearClamp, uv + float2(x, y) * texel).rgb * (3.0 - abs(x)) * (3.0 - abs(y));
+	return sum / 81.0;
+}
+
+// One colored layer over what is below it: the stored foreground in shades of `tint`, never darker than a third,
+// so that dark clothes still show.
+float3 Layer(float3 below, float4 ghost, float3 tint)
+{
+	float shade = 0.35 + 0.65 * dot(ghost.rgb, float3(0.299, 0.587, 0.114));
+	return below + (tint * shade - below) * ghost.a * opacity;
+}
+
+float4 PSStore(VertData v_in) : TARGET
+{
+	return float4(image.Sample(linearClamp, v_in.uv).rgb, Foreground(v_in.uv));
+}
+
+float4 PSTrails(VertData v_in) : TARGET
+{
+	float4 color = image.Sample(linearClamp, v_in.uv);
+	float3 result = color.rgb;
+	if (texel.x > 0.0)
+		result = Blurred(v_in.uv);
+	result = Layer(result, ghost3.Sample(linearClamp, v_in.uv), float3(0.0, 1.0, 0.0));
+	result = Layer(result, ghost2.Sample(linearClamp, v_in.uv), float3(0.0, 0.0, 1.0));
+	result = Layer(result, ghost1.Sample(linearClamp, v_in.uv), float3(1.0, 0.0, 0.0));
+	result += (color.rgb - result) * Foreground(v_in.uv);
+	return float4(result, color.a);
+}
+
+technique Store
+{
+	pass
+	{
+		vertex_shader = VSDefault(v_in);
+		pixel_shader  = PSStore(v_in);
+	}
+}
+
+technique Draw
+{
+	pass
+	{
+		vertex_shader = VSDefault(v_in);
+		pixel_shader  = PSTrails(v_in);
+	}
+}

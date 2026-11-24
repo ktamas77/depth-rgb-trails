@@ -6,13 +6,13 @@
 OBS_VERSION ?= 33.0.3
 VERSION ?= 0.0.0
 OBS_APP ?= /Applications/OBS.app
-NAME := obs-depth-background-removal
+NAME := depth-rgb-trails
 BUNDLE := build/$(NAME).plugin
 OBS_SRC := build/obs-studio
 SIMDE := build/simde
 PLUGINS := $(HOME)/Library/Application Support/obs-studio/plugins
 
-$(BUNDLE): plugin.m depth_mask.effect Info.plist | $(OBS_SRC) $(SIMDE) build/include/obsconfig.h
+$(BUNDLE): plugin.m rgb_trails.effect Info.plist | $(OBS_SRC) $(SIMDE) build/include/obsconfig.h
 	rm -rf $(BUNDLE)
 	mkdir -p $(BUNDLE)/Contents/MacOS $(BUNDLE)/Contents/Resources
 	clang -bundle -fobjc-arc -O2 -Wall -arch arm64 -mmacosx-version-min=15.0 \
@@ -22,7 +22,7 @@ $(BUNDLE): plugin.m depth_mask.effect Info.plist | $(OBS_SRC) $(SIMDE) build/inc
 	cp Info.plist $(BUNDLE)/Contents/
 	plutil -replace CFBundleShortVersionString -string $(VERSION) $(BUNDLE)/Contents/Info.plist
 	plutil -replace CFBundleVersion -string $(VERSION) $(BUNDLE)/Contents/Info.plist
-	cp depth_mask.effect $(BUNDLE)/Contents/Resources/
+	cp rgb_trails.effect $(BUNDLE)/Contents/Resources/
 	codesign --force --sign - $(BUNDLE)
 
 $(OBS_SRC):

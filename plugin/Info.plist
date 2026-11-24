@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>obs-depth-background-removal</string>
+	<string>depth-rgb-trails</string>
 	<key>CFBundleIdentifier</key>
-	<string>io.github.ktamas77.obs-depth-background-removal</string>
+	<string>io.github.ktamas77.depth-rgb-trails</string>
 	<key>CFBundleExecutable</key>
-	<string>obs-depth-background-removal</string>
+	<string>depth-rgb-trails</string>
 	<key>CFBundlePackageType</key>
 	<string>BNDL</string>
 	<key>CFBundleShortVersionString</key>
